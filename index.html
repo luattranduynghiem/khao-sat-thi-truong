@@ -8,139 +8,69 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
-
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #0f172a;
-      font-family: 'Nunito', Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
+      width: 100%; height: 100%; overflow: hidden;
+      background: #0f172a; font-family: 'Nunito', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      touch-action: manipulation; user-select: none; -webkit-user-select: none;
     }
-
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #game-container {
-      width: 100%;
-      height: 100%;
-    }
-
-    #game-container canvas {
-      display: block;
-    }
+    body { display: flex; align-items: center; justify-content: center; }
+    #game-container { width: 100%; height: 100%; }
+    #game-container canvas { display: block; }
 
     #survey-result {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 999;
+      display: none; position: fixed; inset: 0; z-index: 999;
       overflow-y: auto;
       background: linear-gradient(180deg, #0f172a 0%, #172554 100%);
-      color: #eef2ff;
-      padding: 16px;
+      color: #eef2ff; padding: 16px;
       padding-top: calc(16px + env(safe-area-inset-top));
       padding-bottom: calc(16px + env(safe-area-inset-bottom));
     }
-
     .result-card {
-      width: min(760px, 100%);
-      margin: 0 auto;
-      background: rgba(15, 23, 42, 0.62);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 20px;
-      padding: 20px;
-      backdrop-filter: blur(8px);
+      width: min(760px, 100%); margin: 0 auto;
+      background: rgba(15,23,42,0.62); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px; padding: 20px; backdrop-filter: blur(8px);
     }
-
     #survey-result h2 {
-      text-align: center;
-      color: #fde047;
-      font-weight: 800;
-      font-size: 1.6rem;
-      margin-bottom: 8px;
+      text-align: center; color: #fde047; font-weight: 800;
+      font-size: 1.6rem; margin-bottom: 8px;
     }
-
     #survey-result .sub {
-      text-align: center;
-      color: #cbd5e1;
-      font-size: 0.96rem;
-      margin-bottom: 14px;
-      line-height: 1.5;
+      text-align: center; color: #cbd5e1; font-size: 0.96rem;
+      margin-bottom: 14px; line-height: 1.5;
     }
-
     .thanks-box {
-      background: rgba(34, 197, 94, 0.12);
-      border: 1px solid rgba(34, 197, 94, 0.35);
-      border-radius: 14px;
-      padding: 12px 14px;
-      color: #dcfce7;
-      line-height: 1.6;
-      margin-bottom: 14px;
-      font-size: 0.95rem;
+      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.35);
+      border-radius: 14px; padding: 12px 14px; color: #dcfce7;
+      line-height: 1.6; margin-bottom: 14px; font-size: 0.95rem;
     }
-
-    /* Badge trạng thái gửi Google Sheets */
     #sheet-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      transition: background 0.3s;
+      display: flex; align-items: center; gap: 8px;
+      border-radius: 10px; padding: 10px 14px;
+      font-size: 0.9rem; font-weight: 700; margin-bottom: 14px;
     }
-    #sheet-status.sending  { background: rgba(250,204,21,0.15); color: #fde047; border: 1px solid rgba(250,204,21,0.3); }
-    #sheet-status.success  { background: rgba(34,197,94,0.15);  color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
-    #sheet-status.error    { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
-    #sheet-status.saved    { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+    #sheet-status.sending { background: rgba(250,204,21,0.15); color: #fde047; border: 1px solid rgba(250,204,21,0.3); }
+    #sheet-status.success { background: rgba(34,197,94,0.15);  color: #86efac; border: 1px solid rgba(34,197,94,0.3); }
+    #sheet-status.error   { background: rgba(239,68,68,0.15);  color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    #sheet-status.saved   { background: rgba(59,130,246,0.15); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
 
     #survey-result pre {
-      background: rgba(2, 6, 23, 0.78);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 0.82rem;
-      line-height: 1.6;
-      color: #bbf7d0;
-      white-space: pre-wrap;
-      word-break: break-word;
-      overflow-wrap: anywhere;
-      max-height: 280px;
-      overflow-y: auto;
+      background: rgba(2,6,23,0.78); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 14px; font-size: 0.82rem; line-height: 1.6;
+      color: #bbf7d0; white-space: pre-wrap; word-break: break-word;
+      overflow-wrap: anywhere; max-height: 280px; overflow-y: auto;
     }
-
     .result-actions {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 16px;
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 10px; margin-top: 16px;
     }
-
     .result-actions button {
-      border: 0;
-      border-radius: 999px;
-      padding: 12px 18px;
-      min-height: 48px;
-      font-family: 'Nunito', Arial, sans-serif;
-      font-size: 0.98rem;
-      font-weight: 800;
-      cursor: pointer;
+      border: 0; border-radius: 999px; padding: 12px 18px; min-height: 48px;
+      font-family: 'Nunito', Arial, sans-serif; font-size: 0.98rem;
+      font-weight: 800; cursor: pointer;
     }
-
     .btn-primary   { background: #fde047; color: #111827; }
     .btn-secondary { background: #dbeafe; color: #0f172a; }
     .btn-ghost     { background: #e2e8f0; color: #0f172a; }
@@ -148,21 +78,15 @@
 </head>
 <body>
   <div id="game-container"></div>
-
   <div id="survey-result">
     <div class="result-card">
       <h2>Cảm ơn bạn đã tham gia</h2>
       <p class="sub">Khảo sát đã hoàn tất. Dữ liệu đã được tổng hợp để tải xuống máy.</p>
-
       <div class="thanks-box">
         Dữ liệu phản hồi đã được tạo thành file. Bạn có thể tải xuống dưới dạng JSON hoặc CSV.
       </div>
-
-      <!-- Badge trạng thái gửi Google Sheets (mới thêm) -->
       <div id="sheet-status" class="sending">⏳ Đang gửi dữ liệu lên Google Sheets...</div>
-
       <pre id="result-json"></pre>
-
       <div class="result-actions">
         <button class="btn-primary"   onclick="downloadJSON()">Tải file JSON</button>
         <button class="btn-secondary" onclick="downloadCSV()">Tải file CSV</button>
@@ -173,392 +97,207 @@
   </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// ⚙️ CẤU HÌNH — Chỉ cần thay URL này
-// ═══════════════════════════════════════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpPRNLJ2KZq3lUvtRL7B8FZhiJeTsiwaylcP6Ex8U3OvgjECRqFhLtxG1ouTjQPmbPZA/exec';
+// ══════════════════════════════════════════════════
+// ⚙️ CẤU HÌNH — CHỈ SỬA DÒNG NÀY
+// ══════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'DÁN_LINK_WEB_APP_CỦA_BẠN_VÀO_ĐÂY';
 
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 // 📋 DỮ LIỆU KHẢO SÁT
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
 const SURVEY_DATA = {
   title: "Khảo sát Người tiêu dùng Thương hiệu X",
   questions: [
-    {
-      id: "Q01", text: "Giới tính của bạn là gì?", type: "single",
-      options: [
-        { label: "Nam", value: "nam", color: 0x3498db },
-        { label: "Nữ", value: "nu",  color: 0xe91e63 }
-      ]
-    },
-    {
-      id: "Q02", text: "Bạn thuộc nhóm tuổi nào?", type: "single",
-      options: [
-        { label: "Dưới 18 tuổi", value: "u18",   color: 0xe74c3c },
-        { label: "Từ 18 - 25",   value: "18_25",  color: 0xe67e22 },
-        { label: "Từ 26 - 35",   value: "26_35",  color: 0xf1c40f },
-        { label: "Trên 35 tuổi", value: "o35",    color: 0x2ecc71 }
-      ]
-    },
-    {
-      id: "Q03", text: "Thu nhập hàng tháng của bạn?", type: "single",
-      options: [
-        { label: "Dưới 5 triệu",  value: "u5m",    color: 0x95a5a6 },
-        { label: "5 - 10 triệu",  value: "5_10m",  color: 0x34495e },
-        { label: "11 - 20 triệu", value: "11_20m", color: 0x1abc9c },
-        { label: "Trên 20 triệu", value: "o20m",   color: 0x27ae60 }
-      ]
-    },
-    {
-      id: "Q04", text: "Bạn đang sống ở khu vực nào?", type: "single",
-      options: [
-        { label: "Nội thành",       value: "noi_thanh",  color: 0x2980b9 },
-        { label: "Ngoại thành",     value: "ngoai_thanh",color: 0xd35400 },
-        { label: "Tỉnh thành khác", value: "tinh_khac",  color: 0x7f8c8d }
-      ]
-    },
-    {
-      id: "Q05", text: "Bạn đã từng dùng sản phẩm X chưa?", type: "single",
-      options: [
-        { label: "Rồi",  value: "da_dung",   color: 0x22c55e },
-        { label: "Chưa", value: "chua_dung", color: 0xef4444 }
-      ]
-    },
-    {
-      id: "Q06", text: "Bạn có thường dùng sản phẩm X không?", type: "single",
-      options: [
-        { label: "Hiếm khi",      value: "hiem_khi",      color: 0xf97316 },
-        { label: "Vài lần/tháng", value: "thang_vai_lan", color: 0xfacc15 },
-        { label: "Vài lần/tuần",  value: "tuan_vai_lan",  color: 0x38bdf8 },
-        { label: "Hàng ngày",     value: "hang_ngay",     color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q07", text: "Khi mua, bạn có quan tâm đến: Giá cả hợp túi tiền?", type: "binary",
-      options: [
-        { label: "Không", value: "0", color: 0xef4444 },
-        { label: "Có",    value: "1", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q08", text: "Khi mua, bạn có quan tâm đến: Chất lượng tốt?", type: "binary",
-      options: [
-        { label: "Không", value: "0", color: 0xef4444 },
-        { label: "Có",    value: "1", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q09", text: "Khi mua, bạn có quan tâm đến: Uy tín thương hiệu?", type: "binary",
-      options: [
-        { label: "Không", value: "0", color: 0xef4444 },
-        { label: "Có",    value: "1", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q10", text: "Khi mua, bạn có quan tâm đến: Khuyến mãi, ưu đãi?", type: "binary",
-      options: [
-        { label: "Không", value: "0", color: 0xef4444 },
-        { label: "Có",    value: "1", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q11", text: "Khi mua, bạn có quan tâm đến: Bao bì đẹp, tiện lợi?", type: "binary",
-      options: [
-        { label: "Không", value: "0", color: 0xef4444 },
-        { label: "Có",    value: "1", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q12", text: "Đánh giá: Bạn cảm thấy hài lòng về sản phẩm X?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q13", text: "Đánh giá: Giá bán sản phẩm X phù hợp với chất lượng?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q14", text: "Đánh giá: Chất lượng sản phẩm X luôn ổn định?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q15", text: "Đánh giá: Dịch vụ chăm sóc khách hàng của cửa hàng rất tốt?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q16", text: "Đánh giá: Quảng cáo của thương hiệu X rất ấn tượng?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q17", text: "Đánh giá: Các bài viết của cửa hàng trên Facebook/TikTok thu hút bạn?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q18", text: "Đánh giá: Bạn nhiều lần nghe bạn bè khen ngợi sản phẩm X?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q19", text: "Đánh giá: Các sự kiện, chương trình tài trợ của cửa hàng rất thú vị?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q20", text: "Đánh giá: Bạn sẵn sàng giới thiệu sản phẩm X cho người thân?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q21", text: "Đánh giá: Bạn chắc chắn sẽ tiếp tục mua sản phẩm X?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q22", text: "Đánh giá: Bạn luôn ưu tiên chọn X thay vì các hãng đối thủ?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q23", text: "Đánh giá: Bạn sẽ bảo vệ hãng X nếu nghe tin đồn sai sự thật?", type: "likert",
-      options: [
-        { label: "1", desc: "Hoàn toàn không đồng ý", value: "1", color: 0xef4444 },
-        { label: "2", desc: "Không đồng ý",            value: "2", color: 0xf97316 },
-        { label: "3", desc: "Trung lập",                value: "3", color: 0xfacc15 },
-        { label: "4", desc: "Đồng ý",                  value: "4", color: 0x38bdf8 },
-        { label: "5", desc: "Hoàn toàn đồng ý",        value: "5", color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q24", text: "Mỗi tháng bạn chi bao nhiêu tiền cho sản phẩm X?", type: "single",
-      options: [
-        { label: "Dưới 200k",    value: "u200k",   color: 0xef4444 },
-        { label: "200k - 500k",  value: "200_500k",color: 0xf97316 },
-        { label: "500k - 1 triệu",value: "500_1m", color: 0xfacc15 },
-        { label: "Trên 1 triệu", value: "o1m",     color: 0x22c55e }
-      ]
-    },
-    {
-      id: "Q25", text: "Thang điểm từ 1 đến 10, bạn chấm mấy điểm cho uy tín của X?", type: "single",
-      options: [
-        { label: "1 - 3: Thấp",      value: "low",       color: 0xef4444 },
-        { label: "4 - 6: Trung bình", value: "mid",       color: 0xfacc15 },
-        { label: "7 - 8: Khá",        value: "good",      color: 0x38bdf8 },
-        { label: "9 - 10: Tốt",       value: "excellent", color: 0x22c55e }
-      ]
-    }
+    { id:"Q01", text:"Giới tính của bạn là gì?", type:"single",
+      options:[{label:"Nam",value:"nam",color:0x3498db},{label:"Nữ",value:"nu",color:0xe91e63}]},
+    { id:"Q02", text:"Bạn thuộc nhóm tuổi nào?", type:"single",
+      options:[{label:"Dưới 18 tuổi",value:"u18",color:0xe74c3c},{label:"Từ 18 - 25",value:"18_25",color:0xe67e22},{label:"Từ 26 - 35",value:"26_35",color:0xf1c40f},{label:"Trên 35 tuổi",value:"o35",color:0x2ecc71}]},
+    { id:"Q03", text:"Thu nhập hàng tháng của bạn?", type:"single",
+      options:[{label:"Dưới 5 triệu",value:"u5m",color:0x95a5a6},{label:"5 - 10 triệu",value:"5_10m",color:0x34495e},{label:"11 - 20 triệu",value:"11_20m",color:0x1abc9c},{label:"Trên 20 triệu",value:"o20m",color:0x27ae60}]},
+    { id:"Q04", text:"Bạn đang sống ở khu vực nào?", type:"single",
+      options:[{label:"Nội thành",value:"noi_thanh",color:0x2980b9},{label:"Ngoại thành",value:"ngoai_thanh",color:0xd35400},{label:"Tỉnh thành khác",value:"tinh_khac",color:0x7f8c8d}]},
+    { id:"Q05", text:"Bạn đã từng dùng sản phẩm X chưa?", type:"single",
+      options:[{label:"Rồi",value:"da_dung",color:0x22c55e},{label:"Chưa",value:"chua_dung",color:0xef4444}]},
+    { id:"Q06", text:"Bạn có thường dùng sản phẩm X không?", type:"single",
+      options:[{label:"Hiếm khi",value:"hiem_khi",color:0xf97316},{label:"Vài lần/tháng",value:"thang_vai_lan",color:0xfacc15},{label:"Vài lần/tuần",value:"tuan_vai_lan",color:0x38bdf8},{label:"Hàng ngày",value:"hang_ngay",color:0x22c55e}]},
+    { id:"Q07", text:"Khi mua, bạn có quan tâm đến: Giá cả hợp túi tiền?", type:"binary",
+      options:[{label:"Không",value:"0",color:0xef4444},{label:"Có",value:"1",color:0x22c55e}]},
+    { id:"Q08", text:"Khi mua, bạn có quan tâm đến: Chất lượng tốt?", type:"binary",
+      options:[{label:"Không",value:"0",color:0xef4444},{label:"Có",value:"1",color:0x22c55e}]},
+    { id:"Q09", text:"Khi mua, bạn có quan tâm đến: Uy tín thương hiệu?", type:"binary",
+      options:[{label:"Không",value:"0",color:0xef4444},{label:"Có",value:"1",color:0x22c55e}]},
+    { id:"Q10", text:"Khi mua, bạn có quan tâm đến: Khuyến mãi, ưu đãi?", type:"binary",
+      options:[{label:"Không",value:"0",color:0xef4444},{label:"Có",value:"1",color:0x22c55e}]},
+    { id:"Q11", text:"Khi mua, bạn có quan tâm đến: Bao bì đẹp, tiện lợi?", type:"binary",
+      options:[{label:"Không",value:"0",color:0xef4444},{label:"Có",value:"1",color:0x22c55e}]},
+    { id:"Q12", text:"Đánh giá: Bạn cảm thấy hài lòng về sản phẩm X?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q13", text:"Đánh giá: Giá bán sản phẩm X phù hợp với chất lượng?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q14", text:"Đánh giá: Chất lượng sản phẩm X luôn ổn định?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q15", text:"Đánh giá: Dịch vụ chăm sóc khách hàng của cửa hàng rất tốt?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q16", text:"Đánh giá: Quảng cáo của thương hiệu X rất ấn tượng?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q17", text:"Đánh giá: Các bài viết của cửa hàng trên Facebook/TikTok thu hút bạn?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q18", text:"Đánh giá: Bạn nhiều lần nghe bạn bè khen ngợi sản phẩm X?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q19", text:"Đánh giá: Các sự kiện, chương trình tài trợ của cửa hàng rất thú vị?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q20", text:"Đánh giá: Bạn sẵn sàng giới thiệu sản phẩm X cho người thân?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q21", text:"Đánh giá: Bạn chắc chắn sẽ tiếp tục mua sản phẩm X?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q22", text:"Đánh giá: Bạn luôn ưu tiên chọn X thay vì các hãng đối thủ?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q23", text:"Đánh giá: Bạn sẽ bảo vệ hãng X nếu nghe tin đồn sai sự thật?", type:"likert",
+      options:[{label:"1",desc:"Hoàn toàn không đồng ý",value:"1",color:0xef4444},{label:"2",desc:"Không đồng ý",value:"2",color:0xf97316},{label:"3",desc:"Trung lập",value:"3",color:0xfacc15},{label:"4",desc:"Đồng ý",value:"4",color:0x38bdf8},{label:"5",desc:"Hoàn toàn đồng ý",value:"5",color:0x22c55e}]},
+    { id:"Q24", text:"Mỗi tháng bạn chi bao nhiêu tiền cho sản phẩm X?", type:"single",
+      options:[{label:"Dưới 200k",value:"u200k",color:0xef4444},{label:"200k - 500k",value:"200_500k",color:0xf97316},{label:"500k - 1 triệu",value:"500_1m",color:0xfacc15},{label:"Trên 1 triệu",value:"o1m",color:0x22c55e}]},
+    { id:"Q25", text:"Thang điểm từ 1 đến 10, bạn chấm mấy điểm cho uy tín của X?", type:"single",
+      options:[{label:"1 - 3: Thấp",value:"low",color:0xef4444},{label:"4 - 6: Trung bình",value:"mid",color:0xfacc15},{label:"7 - 8: Khá",value:"good",color:0x38bdf8},{label:"9 - 10: Tốt",value:"excellent",color:0x22c55e}]}
   ]
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🔧 CONSTANTS & STATE
-// ═══════════════════════════════════════════════════════════════════════════════
 const CFG = {
-  CHAR_W: 28, CHAR_H: 38,
-  GROUND_H: 54,
-  PLATFORM_W: 118, PLATFORM_H: 22,
-  PLATFORM_ABOVE_GROUND: 140
+  CHAR_W:28, CHAR_H:38, GROUND_H:54,
+  PLATFORM_W:118, PLATFORM_H:22, PLATFORM_ABOVE_GROUND:140
 };
 
 let surveyResponses = [];
 let finalOutput     = null;
 let game            = null;
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 📤 HÀM GỬI GOOGLE SHEETS (tách riêng, dùng lại được)
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// 📤 GỬI GOOGLE SHEETS — đã fix CORS + 302 redirect
+// ══════════════════════════════════════════════════
 function setSheetStatus(type, msg) {
   const el = document.getElementById('sheet-status');
   if (!el) return;
-  el.className = 'sending'; // reset
   el.className = type;
   el.textContent = msg;
 }
 
 function saveToLocalStorage(data) {
   try {
-    const existing = JSON.parse(localStorage.getItem('survey_failed_submissions') || '[]');
-    existing.push({ data, savedAt: new Date().toISOString() });
-    localStorage.setItem('survey_failed_submissions', JSON.stringify(existing));
-    setSheetStatus('saved', '💾 Lưu tạm vào bộ nhớ máy. Có thể thử gửi lại sau.');
-    console.log('💾 Đã lưu dự phòng vào localStorage.');
-  } catch (e) {
-    console.error('❌ Không thể lưu localStorage:', e);
-  }
+    const list = JSON.parse(localStorage.getItem('survey_backup') || '[]');
+    list.push({ data, savedAt: new Date().toISOString() });
+    localStorage.setItem('survey_backup', JSON.stringify(list));
+    console.log('💾 Đã backup vào localStorage.');
+  } catch(e) { console.error('localStorage error:', e); }
 }
 
 async function sendToGoogleSheets(output) {
-  const isValidUrl = APPS_SCRIPT_URL &&
-    APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwpPRNLJ2KZq3lUvtRL7B8FZhiJeTsiwaylcP6Ex8U3OvgjECRqFhLtxG1ouTjQPmbPZA/exec' &&
+  const isValid = APPS_SCRIPT_URL &&
+    APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwvt6R9tSch-SMYMU447F9XFt-BpuDXk9VbyxCBNoQwoEpCcIgQpXtHBJFij9jz1D1DhA/exec' &&
     APPS_SCRIPT_URL.startsWith('https://script.google.com');
 
-  if (!isValidUrl) {
-    setSheetStatus('saved', '⚠️ Chưa cấu hình URL. Dữ liệu chỉ lưu cục bộ.');
+  if (!isValid) {
+    setSheetStatus('saved', '⚠️ Chưa cấu hình URL. Dữ liệu lưu cục bộ.');
+    saveToLocalStorage(output);
     return;
   }
 
-  setSheetStatus('sending', '⏳ Đang gửi dữ liệu lên Google Sheets...');
+  setSheetStatus('sending', '⏳ Đang gửi lên Google Sheets...');
 
   const controller = new AbortController();
-  const timeoutId  = setTimeout(() => controller.abort(), 12000); // 12s timeout
+  const tid = setTimeout(() => controller.abort(), 15000);
 
   try {
-    const response = await fetch(APPS_SCRIPT_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body:    JSON.stringify(output),
-      signal:  controller.signal
+    // FIX CHÍNH:
+    // 1. redirect: 'follow'  — tường minh follow 302 redirect của Apps Script
+    // 2. Content-Type: text/plain — tránh CORS preflight
+    // 3. Không dùng mode: 'no-cors' — để đọc được response
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method:   'POST',
+      redirect: 'follow',
+      headers:  { 'Content-Type': 'text/plain;charset=utf-8' },
+      body:     JSON.stringify(output),
+      signal:   controller.signal
     });
-    clearTimeout(timeoutId);
+    clearTimeout(tid);
 
-    // Apps Script redirect về URL /exec → response.redirected = true, status 200
-    const text = await response.text();
+    // HtmlService trả text/html — đọc text rồi extract JSON từ body
+    const raw = await res.text();
+
+    // Apps Script bọc JSON trong HTML, cần extract
     let result;
     try {
-      result = JSON.parse(text);
+      // Thử parse trực tiếp trước (nếu server trả JSON thuần)
+      result = JSON.parse(raw);
     } catch (_) {
-      // Apps Script đôi khi wrap HTML khi lỗi deploy
-      throw new Error('Response không phải JSON: ' + text.substring(0, 120));
+      // Extract JSON từ trong HTML tag
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (match) {
+        result = JSON.parse(match[0]);
+      } else {
+        throw new Error('Không tìm thấy JSON trong response: ' + raw.substring(0, 100));
+      }
     }
 
     if (result.status === 'success') {
-      setSheetStatus('success', '✅ Đã ghi thành công vào Google Sheets!');
+      setSheetStatus('success', '✅ Ghi Google Sheets thành công! ' + (result.message || ''));
       console.log('✅', result.message);
     } else {
-      throw new Error(result.message || 'Server trả lỗi không xác định');
+      throw new Error(result.message || 'Server báo lỗi');
     }
 
   } catch (err) {
-    clearTimeout(timeoutId);
-    const msg = err.name === 'AbortError'
-      ? 'Timeout sau 12 giây. Kiểm tra kết nối mạng.'
-      : err.message;
-    console.error('❌ Lỗi gửi Sheets:', msg);
-    setSheetStatus('error', '❌ Gửi thất bại: ' + msg);
-    saveToLocalStorage(output); // fallback lưu local
+    clearTimeout(tid);
+    const msg = err.name === 'AbortError' ? 'Timeout 15 giây.' : err.message;
+    console.error('❌ Lỗi gửi:', msg);
+    setSheetStatus('error', '❌ Gửi thất bại: ' + msg + ' — Dữ liệu đã lưu cục bộ.');
+    saveToLocalStorage(output);
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🎮 PHASER SCENES
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// 🎮 PHASER — StartScene
+// ══════════════════════════════════════════════════
 class StartScene extends Phaser.Scene {
   constructor() { super('StartScene'); }
-
   create() {
-    const W = this.scale.width;
-    const H = this.scale.height;
-
+    const W = this.scale.width, H = this.scale.height;
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x0f172a, 0x0f172a, 0x1e3a8a, 0x0f766e, 1);
     bg.fillRect(0, 0, W, H);
-
     for (let i = 0; i < 20; i++) {
-      this.add.circle(
-        Phaser.Math.Between(0, W),
-        Phaser.Math.Between(0, H),
-        Phaser.Math.FloatBetween(1, 2.6),
-        0xffffff,
-        Phaser.Math.FloatBetween(0.15, 0.55)
-      );
+      this.add.circle(Phaser.Math.Between(0,W), Phaser.Math.Between(0,H),
+        Phaser.Math.FloatBetween(1,2.6), 0xffffff, Phaser.Math.FloatBetween(0.15,0.55));
     }
-
-    this.add.text(W / 2, H * 0.18, '🌿', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '56px'
+    this.add.text(W/2, H*0.18, '🌿', { fontFamily:'Nunito,Arial,sans-serif', fontSize:'56px' }).setOrigin(0.5);
+    this.add.text(W/2, H*0.30, 'Khảo sát thương hiệu X', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'26px', fontStyle:'800',
+      color:'#fde047', align:'center', wordWrap:{width:W-40,useAdvancedWrap:true}
     }).setOrigin(0.5);
-
-    this.add.text(W / 2, H * 0.30, 'Khảo sát thương hiệu X', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '26px',
-      fontStyle: '800', color: '#fde047', align: 'center',
-      wordWrap: { width: W - 40, useAdvancedWrap: true }
+    this.add.text(W/2, H*0.44, 'Chạm trực tiếp vào đáp án để nhân vật nhảy tới và chọn.', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'16px', color:'#e2e8f0',
+      align:'center', wordWrap:{width:W-50,useAdvancedWrap:true}, lineSpacing:4
     }).setOrigin(0.5);
-
-    this.add.text(W / 2, H * 0.44, 'Chạm trực tiếp vào đáp án để nhân vật nhảy tới và chọn.', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '16px',
-      color: '#e2e8f0', align: 'center',
-      wordWrap: { width: W - 50, useAdvancedWrap: true }, lineSpacing: 4
-    }).setOrigin(0.5);
-
-    const btn = this.add.text(W / 2, H * 0.72, ' BẮT ĐẦU ', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '24px',
-      fontStyle: '800', color: '#111827',
-      backgroundColor: '#fde047', padding: { x: 24, y: 14 }
-    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
-
-    this.tweens.add({ targets: btn, scaleX: 1.05, scaleY: 1.05, duration: 720, yoyo: true, repeat: -1 });
+    const btn = this.add.text(W/2, H*0.72, ' BẮT ĐẦU ', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'24px', fontStyle:'800',
+      color:'#111827', backgroundColor:'#fde047', padding:{x:24,y:14}
+    }).setOrigin(0.5).setInteractive({useHandCursor:true});
+    this.tweens.add({targets:btn, scaleX:1.05, scaleY:1.05, duration:720, yoyo:true, repeat:-1});
     btn.on('pointerdown', () => this.scene.start('GameScene'));
   }
 }
 
+// ══════════════════════════════════════════════════
+// 🎮 PHASER — GameScene
+// ══════════════════════════════════════════════════
 class GameScene extends Phaser.Scene {
   constructor() { super('GameScene'); }
 
   init() {
-    surveyResponses  = [];
-    this.currentQ    = 0;
+    surveyResponses    = [];
+    this.currentQ      = 0;
     this.transitioning = false;
-    this.platforms   = [];
+    this.platforms     = [];
     this.platformViews = [];
-    this.particles   = [];
+    this.particles     = [];
   }
 
   create() {
@@ -569,20 +308,14 @@ class GameScene extends Phaser.Scene {
     const bg = this.add.graphics();
     bg.fillGradientStyle(0x081120, 0x0f172a, 0x10233f, 0x164e63, 1);
     bg.fillRect(0, 0, this.W, this.H);
-
     for (let i = 0; i < 28; i++) {
-      this.add.circle(
-        Phaser.Math.Between(0, this.W),
-        Phaser.Math.Between(0, this.H),
-        Phaser.Math.FloatBetween(0.8, 2.0),
-        0xffffff, Phaser.Math.FloatBetween(0.12, 0.5)
-      );
+      this.add.circle(Phaser.Math.Between(0,this.W), Phaser.Math.Between(0,this.H),
+        Phaser.Math.FloatBetween(0.8,2.0), 0xffffff, Phaser.Math.FloatBetween(0.12,0.5));
     }
 
     this.groundGfx   = this.add.graphics();
     this.pfContainer = this.add.container(0, 0);
     this.charGfx     = this.add.graphics();
-
     this.charX = this.W / 2;
     this.charY = this.groundY;
     this.facingRight = true;
@@ -598,51 +331,38 @@ class GameScene extends Phaser.Scene {
     const hud = this.add.graphics();
     hud.fillStyle(0x000000, 0.32);
     hud.fillRect(0, 0, this.W, 56);
-
     const track = this.add.graphics();
     track.fillStyle(0xffffff, 0.12);
     track.fillRoundedRect(12, 36, this.W - 24, 10, 6);
-
     this.progressFill = this.add.graphics();
-
-    this.hudLabel = this.add.text(this.W / 2, 16, '', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '14px',
-      fontStyle: '800', color: '#fde68a'
+    this.hudLabel = this.add.text(this.W/2, 16, '', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'14px', fontStyle:'800', color:'#fde68a'
     }).setOrigin(0.5);
   }
 
   createQuestionBubble() {
-    const bubbleY = 60;
-    const bubbleH = 136;
-
+    const bubbleY = 60, bubbleH = 136;
     this.bubbleBg = this.add.graphics();
     this.bubbleBg.fillStyle(0xffffff, 0.97);
-    this.bubbleBg.fillRoundedRect(10, bubbleY, this.W - 20, bubbleH, 18);
+    this.bubbleBg.fillRoundedRect(10, bubbleY, this.W-20, bubbleH, 18);
     this.bubbleBg.fillTriangle(
-      this.W / 2 - 10, bubbleY + bubbleH,
-      this.W / 2 + 10, bubbleY + bubbleH,
-      this.W / 2,      bubbleY + bubbleH + 14
+      this.W/2-10, bubbleY+bubbleH, this.W/2+10, bubbleY+bubbleH, this.W/2, bubbleY+bubbleH+14
     );
-
-    this.questionText = this.add.text(this.W / 2, bubbleY + 26, '', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '16px',
-      fontStyle: '800', color: '#0f172a', align: 'center',
-      wordWrap: { width: this.W - 50, useAdvancedWrap: true }, lineSpacing: 5
+    this.questionText = this.add.text(this.W/2, bubbleY+26, '', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'16px', fontStyle:'800',
+      color:'#0f172a', align:'center', wordWrap:{width:this.W-50,useAdvancedWrap:true}, lineSpacing:5
     }).setOrigin(0.5, 0);
-
-    this.helperText = this.add.text(this.W / 2, bubbleY + 100, '', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '12px',
-      fontStyle: '700', color: '#1e293b', backgroundColor: '#dbeafe',
-      padding: { x: 8, y: 4 }, align: 'center',
-      wordWrap: { width: this.W - 70, useAdvancedWrap: true }
+    this.helperText = this.add.text(this.W/2, bubbleY+100, '', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'12px', fontStyle:'700',
+      color:'#1e293b', backgroundColor:'#dbeafe', padding:{x:8,y:4},
+      align:'center', wordWrap:{width:this.W-70,useAdvancedWrap:true}
     }).setOrigin(0.5).setVisible(false);
   }
 
   createFeedbackText() {
-    this.feedbackText = this.add.text(this.W / 2, this.H * 0.60, 'Cảm ơn!', {
-      fontFamily: 'Nunito, Arial, sans-serif', fontSize: '26px',
-      fontStyle: '800', color: '#fef08a',
-      backgroundColor: 'rgba(15,23,42,0.75)', padding: { x: 12, y: 8 }, align: 'center'
+    this.feedbackText = this.add.text(this.W/2, this.H*0.60, 'Cảm ơn!', {
+      fontFamily:'Nunito,Arial,sans-serif', fontSize:'26px', fontStyle:'800',
+      color:'#fef08a', backgroundColor:'rgba(15,23,42,0.75)', padding:{x:12,y:8}, align:'center'
     }).setOrigin(0.5).setAlpha(0);
   }
 
@@ -650,13 +370,11 @@ class GameScene extends Phaser.Scene {
     const total = SURVEY_DATA.questions.length;
     const q     = SURVEY_DATA.questions[this.currentQ];
     const pct   = this.currentQ / total;
-
     this.hudLabel.setText(`Câu ${this.currentQ + 1}/${total}`);
     this.progressFill.clear();
     this.progressFill.fillStyle(0x22c55e, 1);
-    this.progressFill.fillRoundedRect(12, 36, (this.W - 24) * pct, 10, 6);
+    this.progressFill.fillRoundedRect(12, 36, (this.W-24)*pct, 10, 6);
     this.questionText.setText(q.text);
-
     if (q.type === 'likert') {
       this.helperText.setText('Thang đo Likert: 1 = Hoàn toàn không đồng ý, 5 = Hoàn toàn đồng ý');
       this.helperText.setVisible(true);
@@ -667,12 +385,10 @@ class GameScene extends Phaser.Scene {
 
   shortenLabel(label) {
     const map = {
-      'Dưới 18 tuổi': 'Dưới 18', 'Từ 18 - 25': '18 - 25',
-      'Từ 26 - 35': '26 - 35',   'Trên 35 tuổi': 'Trên 35',
-      'Dưới 5 triệu': 'Dưới 5tr','5 - 10 triệu': '5 - 10tr',
-      '11 - 20 triệu': '11 - 20tr','Trên 20 triệu': 'Trên 20tr',
-      'Tỉnh thành khác': 'Tỉnh khác','500k - 1 triệu': '500k - 1tr',
-      '4 - 6: Trung bình': '4 - 6: TB'
+      'Dưới 18 tuổi':'Dưới 18','Từ 18 - 25':'18 - 25','Từ 26 - 35':'26 - 35',
+      'Trên 35 tuổi':'Trên 35','Dưới 5 triệu':'Dưới 5tr','5 - 10 triệu':'5 - 10tr',
+      '11 - 20 triệu':'11 - 20tr','Trên 20 triệu':'Trên 20tr',
+      'Tỉnh thành khác':'Tỉnh khác','500k - 1 triệu':'500k-1tr','4 - 6: Trung bình':'4-6: TB'
     };
     return map[label] || label;
   }
@@ -681,7 +397,6 @@ class GameScene extends Phaser.Scene {
     this.platformViews.forEach(p => { p.zone.destroy(); p.container.destroy(); });
     this.platformViews = [];
     this.platforms     = [];
-
     const q      = SURVEY_DATA.questions[qIndex];
     const opts   = q.options;
     const n      = opts.length;
@@ -692,83 +407,60 @@ class GameScene extends Phaser.Scene {
 
     opts.forEach((opt, i) => {
       const x = startX + i * step;
-      const y = q.type === 'likert'
-        ? baseY - (n - 1 - i) * 18
-        : baseY + (i % 2 === 0 ? 0 : -16);
-
+      const y = q.type === 'likert' ? baseY-(n-1-i)*18 : baseY+(i%2===0?0:-16);
       const cont = this.add.container(x, y);
-      const g    = this.add.graphics();
+      const g = this.add.graphics();
       g.fillStyle(opt.color, 1);
-      g.fillRoundedRect(-CFG.PLATFORM_W / 2, -CFG.PLATFORM_H / 2, CFG.PLATFORM_W, CFG.PLATFORM_H, 9);
+      g.fillRoundedRect(-CFG.PLATFORM_W/2, -CFG.PLATFORM_H/2, CFG.PLATFORM_W, CFG.PLATFORM_H, 9);
       g.fillStyle(0xffffff, 0.18);
-      g.fillRoundedRect(-CFG.PLATFORM_W / 2 + 4, -CFG.PLATFORM_H / 2 + 3, CFG.PLATFORM_W - 8, 4, 3);
-
+      g.fillRoundedRect(-CFG.PLATFORM_W/2+4, -CFG.PLATFORM_H/2+3, CFG.PLATFORM_W-8, 4, 3);
       const labelBg = this.add.graphics();
       labelBg.fillStyle(0x0f172a, 0.82);
-      labelBg.fillRoundedRect(-54, -62, 108, q.type === 'likert' ? 40 : 30, 8);
-
-      const display = q.type === 'likert' ? opt.label : this.shortenLabel(opt.label);
-      const label   = this.add.text(0, q.type === 'likert' ? -48 : -46, display, {
-        fontFamily: 'Nunito, Arial, sans-serif',
-        fontSize:   q.type === 'likert' ? '16px' : (display.length > 12 ? '10px' : '12px'),
-        fontStyle: '800', color: '#ffffff', align: 'center',
-        wordWrap: { width: 100, useAdvancedWrap: true }, lineSpacing: 2
+      labelBg.fillRoundedRect(-54, -62, 108, q.type==='likert'?40:30, 8);
+      const display = q.type==='likert' ? opt.label : this.shortenLabel(opt.label);
+      const label = this.add.text(0, q.type==='likert'?-48:-46, display, {
+        fontFamily:'Nunito,Arial,sans-serif',
+        fontSize: q.type==='likert'?'16px':(display.length>12?'10px':'12px'),
+        fontStyle:'800', color:'#ffffff', align:'center',
+        wordWrap:{width:100,useAdvancedWrap:true}, lineSpacing:2
       }).setOrigin(0.5);
-
       cont.add([g, labelBg, label]);
-
       if (q.type === 'likert') {
         const desc = this.add.text(0, -28, opt.desc, {
-          fontFamily: 'Nunito, Arial, sans-serif', fontSize: '8px',
-          fontStyle: '700', color: '#cbd5e1', align: 'center',
-          wordWrap: { width: 100, useAdvancedWrap: true }
+          fontFamily:'Nunito,Arial,sans-serif', fontSize:'8px',
+          fontStyle:'700', color:'#cbd5e1', align:'center',
+          wordWrap:{width:100,useAdvancedWrap:true}
         }).setOrigin(0.5);
         cont.add(desc);
       }
-
-      const zone = this.add.zone(x - 60, y - 72, 120, 96)
-        .setOrigin(0, 0)
-        .setInteractive({ useHandCursor: true });
-
+      const zone = this.add.zone(x-60, y-72, 120, 96).setOrigin(0,0).setInteractive({useHandCursor:true});
       zone.on('pointerdown', () => this.handleAnswerTap(opt, x, y, i));
-
-      this.tweens.add({
-        targets: cont, y: y - 5, duration: 980 + i * 70,
-        yoyo: true, repeat: -1, ease: 'Sine.easeInOut'
-      });
-
+      this.tweens.add({ targets:cont, y:y-5, duration:980+i*70, yoyo:true, repeat:-1, ease:'Sine.easeInOut' });
       this.pfContainer.add(cont);
-      this.platforms.push({ x, y, option: opt, index: i });
-      this.platformViews.push({ container: cont, zone });
+      this.platforms.push({x, y, option:opt, index:i});
+      this.platformViews.push({container:cont, zone});
     });
   }
 
   handleAnswerTap(option, x, y, idx) {
     if (this.transitioning) return;
-    this.transitioning   = true;
-    this.facingRight     = x >= this.charX;
-
-    const landingY = y - CFG.PLATFORM_H / 2 - CFG.CHAR_H / 2;
+    this.transitioning = true;
+    this.facingRight   = x >= this.charX;
+    const landingY = y - CFG.PLATFORM_H/2 - CFG.CHAR_H/2;
     const peakY    = landingY - 40;
-    const startX   = this.charX;
-    const startY   = this.charY;
+    const startX   = this.charX, startY = this.charY;
     const midX     = (startX + x) / 2;
-
-    const selectedView = this.platformViews[idx];
-    if (selectedView) {
-      this.tweens.add({ targets: selectedView.container, scaleX: 1.16, scaleY: 1.16, duration: 120, yoyo: true });
-    }
-
+    const sv = this.platformViews[idx];
+    if (sv) this.tweens.add({ targets:sv.container, scaleX:1.16, scaleY:1.16, duration:120, yoyo:true });
     this.tweens.addCounter({
-      from: 0, to: 1, duration: 520, ease: 'Sine.easeInOut',
+      from:0, to:1, duration:520, ease:'Sine.easeInOut',
       onUpdate: tween => {
         const t = tween.getValue();
         this.charX = Phaser.Math.Interpolation.Linear([startX, midX, x], t);
         this.charY = Phaser.Math.Interpolation.QuadraticBezier(t, startY, peakY, landingY);
       },
       onComplete: () => {
-        this.charX = x;
-        this.charY = landingY;
+        this.charX = x; this.charY = landingY;
         this.saveAnswer(option);
         this.burst(this.charX, this.charY, option.color);
         this.showThankYouThenNext(option);
@@ -777,23 +469,16 @@ class GameScene extends Phaser.Scene {
   }
 
   showThankYouThenNext(option) {
-    this.feedbackText.setText('Cảm ơn!');
-    this.feedbackText.setAlpha(1).setScale(0.8);
-    this.tweens.add({ targets: this.feedbackText, alpha: 1, scaleX: 1, scaleY: 1, duration: 180, ease: 'Back.Out' });
-
-    const q          = SURVEY_DATA.questions[this.currentQ];
+    this.feedbackText.setText('Cảm ơn!').setAlpha(1).setScale(0.8);
+    this.tweens.add({ targets:this.feedbackText, alpha:1, scaleX:1, scaleY:1, duration:180, ease:'Back.Out' });
+    const q = SURVEY_DATA.questions[this.currentQ];
     const endedEarly = q.id === 'Q05' && option.value === 'chua_dung';
-
     this.time.delayedCall(650, () => {
-      this.tweens.add({ targets: this.feedbackText, alpha: 0, duration: 180 });
-
+      this.tweens.add({ targets:this.feedbackText, alpha:0, duration:180 });
       if (endedEarly) { this.endGame(true); return; }
-
       this.currentQ++;
       if (this.currentQ >= SURVEY_DATA.questions.length) { this.endGame(false); return; }
-
-      this.charX         = this.W / 2;
-      this.charY         = this.groundY;
+      this.charX = this.W/2; this.charY = this.groundY;
       this.transitioning = false;
       this.spawnPlatforms(this.currentQ);
       this.updateQuestionUI();
@@ -811,10 +496,9 @@ class GameScene extends Phaser.Scene {
     });
   }
 
-  async endGame(skipped = false) {
-    // ── 1. Snapshot ngay lập tức trước mọi thao tác async ─────────────────
+  endGame(skipped = false) {
+    // Snapshot ngay lập tức
     const snapshotResponses = [...surveyResponses];
-
     const output = {
       survey:            SURVEY_DATA.title,
       completedAt:       new Date().toISOString(),
@@ -823,131 +507,96 @@ class GameScene extends Phaser.Scene {
       answeredQuestions: snapshotResponses.length,
       responses:         snapshotResponses
     };
+    finalOutput = output;
 
-    finalOutput = output; // lưu vào global để downloadJSON/CSV dùng
-
-    // ── 2. Hiển thị màn hình kết quả ngay ──────────────────────────────────
+    // Hiển thị UI ngay
     const resultEl = document.getElementById('survey-result');
     const jsonEl   = document.getElementById('result-json');
-    if (jsonEl)   jsonEl.textContent      = JSON.stringify(output, null, 2);
-    if (resultEl) resultEl.style.display  = 'block';
+    if (jsonEl)   jsonEl.textContent     = JSON.stringify(output, null, 2);
+    if (resultEl) resultEl.style.display = 'block';
 
-    // ── 3. Gửi lên Google Sheets (async, không block UI) ───────────────────
-    // Không await ở đây để UI hiện ngay; sendToGoogleSheets tự cập nhật badge
+    // Gửi Sheets bất đồng bộ (không await, không block UI)
     sendToGoogleSheets(output);
 
-    // ── 4. Pause scene NGAY sau khi UI đã hiện (không cần chờ fetch) ───────
-    if (this.scene && this.scene.pause) {
-      this.scene.pause();
-    }
+    // Pause scene
+    if (this.scene && this.scene.pause) this.scene.pause();
   }
 
   drawCharacter() {
-    const g = this.charGfx;
-    const x = this.charX;
-    const y = this.charY;
-    const f = this.facingRight ? 1 : -1;
+    const g = this.charGfx, x = this.charX, y = this.charY, f = this.facingRight?1:-1;
     g.clear();
-    g.fillStyle(0x000000, 0.18);
-    g.fillEllipse(x, y + CFG.CHAR_H / 2 + 3, CFG.CHAR_W + 8, 8);
-    g.fillStyle(0x2563eb);
-    g.fillRoundedRect(x - CFG.CHAR_W / 2, y - CFG.CHAR_H / 2 + 12, CFG.CHAR_W, CFG.CHAR_H - 12, 6);
-    g.fillStyle(0xf1c27d);
-    g.fillCircle(x, y - CFG.CHAR_H / 2 + 8, 13);
-    g.fillStyle(0xffffff);
-    g.fillCircle(x + f * 4, y - CFG.CHAR_H / 2 + 7, 4);
-    g.fillStyle(0x111827);
-    g.fillCircle(x + f * 5.4, y - CFG.CHAR_H / 2 + 7, 2);
+    g.fillStyle(0x000000,0.18); g.fillEllipse(x, y+CFG.CHAR_H/2+3, CFG.CHAR_W+8, 8);
+    g.fillStyle(0x2563eb); g.fillRoundedRect(x-CFG.CHAR_W/2, y-CFG.CHAR_H/2+12, CFG.CHAR_W, CFG.CHAR_H-12, 6);
+    g.fillStyle(0xf1c27d); g.fillCircle(x, y-CFG.CHAR_H/2+8, 13);
+    g.fillStyle(0xffffff); g.fillCircle(x+f*4, y-CFG.CHAR_H/2+7, 4);
+    g.fillStyle(0x111827); g.fillCircle(x+f*5.4, y-CFG.CHAR_H/2+7, 2);
     g.fillStyle(0x22c55e);
-    g.fillRoundedRect(x - 14 * f, y - CFG.CHAR_H / 2 - 4, 24 * f, 8, 4);
-    g.fillRect(x - 17 * f, y - CFG.CHAR_H / 2 + 4, 28 * f, 4);
+    g.fillRoundedRect(x-14*f, y-CFG.CHAR_H/2-4, 24*f, 8, 4);
+    g.fillRect(x-17*f, y-CFG.CHAR_H/2+4, 28*f, 4);
     g.fillStyle(0x1e3a8a);
-    g.fillRoundedRect(x - 10, y + CFG.CHAR_H / 2 - 12, 8, 12, 3);
-    g.fillRoundedRect(x + 2,  y + CFG.CHAR_H / 2 - 12, 8, 12, 3);
+    g.fillRoundedRect(x-10, y+CFG.CHAR_H/2-12, 8, 12, 3);
+    g.fillRoundedRect(x+2,  y+CFG.CHAR_H/2-12, 8, 12, 3);
   }
 
   drawGround() {
     this.groundGfx.clear();
-    this.groundGfx.fillStyle(0x15803d, 1);
-    this.groundGfx.fillRect(0, this.H - CFG.GROUND_H, this.W, CFG.GROUND_H);
-    this.groundGfx.fillStyle(0x4ade80, 1);
-    this.groundGfx.fillRect(0, this.H - CFG.GROUND_H, this.W, 7);
+    this.groundGfx.fillStyle(0x15803d,1);
+    this.groundGfx.fillRect(0, this.H-CFG.GROUND_H, this.W, CFG.GROUND_H);
+    this.groundGfx.fillStyle(0x4ade80,1);
+    this.groundGfx.fillRect(0, this.H-CFG.GROUND_H, this.W, 7);
   }
 
-  burst(x, y, color = 0xffffff) {
-    for (let i = 0; i < 10; i++) {
-      const dot = this.add.circle(x, y, Phaser.Math.Between(2, 4), color, 0.95);
-      const a   = Phaser.Math.FloatBetween(0, Math.PI * 2);
-      const s   = Phaser.Math.FloatBetween(70, 200);
-      this.particles.push({
-        obj: dot, x, y,
-        vx: Math.cos(a) * s, vy: Math.sin(a) * s - 80,
-        life: 0.55, maxLife: 0.55
-      });
+  burst(x, y, color=0xffffff) {
+    for (let i=0; i<10; i++) {
+      const dot = this.add.circle(x, y, Phaser.Math.Between(2,4), color, 0.95);
+      const a = Phaser.Math.FloatBetween(0, Math.PI*2);
+      const s = Phaser.Math.FloatBetween(70, 200);
+      this.particles.push({ obj:dot, x, y, vx:Math.cos(a)*s, vy:Math.sin(a)*s-80, life:0.55, maxLife:0.55 });
     }
   }
 
   update(time, delta) {
-    const dt = delta / 1000;
-    for (let i = this.particles.length - 1; i >= 0; i--) {
+    const dt = delta/1000;
+    for (let i=this.particles.length-1; i>=0; i--) {
       const p = this.particles[i];
-      p.life -= dt;
-      p.x += p.vx * dt;
-      p.y += p.vy * dt;
-      p.vy += 220 * dt;
-      p.obj.setPosition(p.x, p.y).setAlpha(Math.max(0, p.life / p.maxLife));
-      if (p.life <= 0) { p.obj.destroy(); this.particles.splice(i, 1); }
+      p.life -= dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 220*dt;
+      p.obj.setPosition(p.x, p.y).setAlpha(Math.max(0, p.life/p.maxLife));
+      if (p.life<=0) { p.obj.destroy(); this.particles.splice(i,1); }
     }
     this.drawCharacter();
     this.drawGround();
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 💾 DOWNLOAD & UTILITY FUNCTIONS
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// 💾 DOWNLOAD & UTILITIES
+// ══════════════════════════════════════════════════
 function buildCSV(output) {
-  const rows = [[
-    'survey','completedAt','endedEarly','totalQuestions',
-    'answeredQuestions','questionId','questionText','answerId','answerLabel','timestamp'
-  ]];
+  const rows = [['survey','completedAt','endedEarly','totalQuestions','answeredQuestions','questionId','questionText','answerId','answerLabel','timestamp']];
   output.responses.forEach(r => {
-    rows.push([
-      output.survey, output.completedAt, output.endedEarly,
-      output.totalQuestions, output.answeredQuestions,
-      r.questionId, r.questionText, r.answerId, r.answerLabel, r.timestamp
-    ]);
+    rows.push([output.survey,output.completedAt,output.endedEarly,output.totalQuestions,
+      output.answeredQuestions,r.questionId,r.questionText,r.answerId,r.answerLabel,r.timestamp]);
   });
-  return rows.map(row =>
-    row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')
-  ).join('\n');
+  return rows.map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
 }
 
 function downloadTextFile(filename, text, mimeType) {
-  const blob = new Blob(['\uFEFF' + text], { type: mimeType }); // BOM cho Excel đọc đúng UTF-8
+  const blob = new Blob(['\uFEFF'+text], {type:mimeType});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url; a.download = filename;
+  a.href=url; a.download=filename;
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
 }
 
 function downloadJSON() {
   if (!finalOutput) return;
-  downloadTextFile(
-    `survey_${new Date().toISOString().replace(/[:.]/g, '-')}.json`,
-    JSON.stringify(finalOutput, null, 2),
-    'application/json;charset=utf-8'
-  );
+  downloadTextFile(`survey_${new Date().toISOString().replace(/[:.]/g,'-')}.json`, JSON.stringify(finalOutput,null,2), 'application/json;charset=utf-8');
 }
 
 function downloadCSV() {
   if (!finalOutput) return;
-  downloadTextFile(
-    `survey_${new Date().toISOString().replace(/[:.]/g, '-')}.csv`,
-    buildCSV(finalOutput),
-    'text/csv;charset=utf-8'
-  );
+  downloadTextFile(`survey_${new Date().toISOString().replace(/[:.]/g,'-')}.csv`, buildCSV(finalOutput), 'text/csv;charset=utf-8');
 }
 
 function copyResult() {
@@ -959,28 +608,23 @@ function copyResult() {
 
 function restartGame() {
   document.getElementById('survey-result').style.display = 'none';
-  surveyResponses = [];
-  finalOutput     = null;
-  if (game) {
-    game.scene.stop('GameScene');
-    game.scene.start('StartScene');
-  }
+  surveyResponses = []; finalOutput = null;
+  if (game) { game.scene.stop('GameScene'); game.scene.start('StartScene'); }
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// 🚀 KHỞI ĐỘNG GAME
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════
+// 🚀 KHỞI ĐỘNG
+// ══════════════════════════════════════════════════
 game = new Phaser.Game({
   type: Phaser.AUTO,
-  width: window.innerWidth,
-  height: window.innerHeight,
+  width: window.innerWidth, height: window.innerHeight,
   parent: 'game-container',
   backgroundColor: '#0f172a',
   scene: [StartScene, GameScene],
   scale: { mode: Phaser.Scale.RESIZE, autoCenter: Phaser.Scale.CENTER_BOTH }
 });
 
-document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+document.addEventListener('touchmove', e => e.preventDefault(), { passive:false });
 </script>
 </body>
 </html>
