@@ -176,7 +176,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // ⚙️ CẤU HÌNH — Chỉ cần thay URL này
 // ═══════════════════════════════════════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'DÁN_LINK_WEB_APP_CỦA_BẠN_VÀO_ĐÂY';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwpPRNLJ2KZq3lUvtRL7B8FZhiJeTsiwaylcP6Ex8U3OvgjECRqFhLtxG1ouTjQPmbPZA/exec';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 📋 DỮ LIỆU KHẢO SÁT
@@ -448,7 +448,7 @@ function saveToLocalStorage(data) {
 
 async function sendToGoogleSheets(output) {
   const isValidUrl = APPS_SCRIPT_URL &&
-    APPS_SCRIPT_URL !== 'DÁN_LINK_WEB_APP_CỦA_BẠN_VÀO_ĐÂY' &&
+    APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwpPRNLJ2KZq3lUvtRL7B8FZhiJeTsiwaylcP6Ex8U3OvgjECRqFhLtxG1ouTjQPmbPZA/exec' &&
     APPS_SCRIPT_URL.startsWith('https://script.google.com');
 
   if (!isValidUrl) {
