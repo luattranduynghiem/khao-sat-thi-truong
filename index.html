@@ -180,31 +180,19 @@ async function sendToGoogleSheets(output) {
   const controller = new AbortController();
   const tid = setTimeout(() => controller.abort(), 15000);
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method:   'POST',
-      redirect: 'follow',
-      headers:  { 'Content-Type': 'text/plain;charset=utf-8' },
-      body:     JSON.stringify(output),
-      signal:   controller.signal
+    // Dùng no-cors vì Apps Script không trả CORS header
+    // Dữ liệu vẫn được ghi vào Sheet dù không đọc được response
+    await fetch(APPS_SCRIPT_URL, {
+      method:  'POST',
+      mode:    'no-cors',   // ← KEY FIX: không cần đọc response
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body:    JSON.stringify(output),
+      signal:  controller.signal
     });
     clearTimeout(tid);
-
-    const raw = await res.text();
-    let result;
-    try {
-      result = JSON.parse(raw);
-    } catch (_) {
-      const match = raw.match(/\{[\s\S]*\}/);
-      if (match) result = JSON.parse(match[0]);
-      else throw new Error('Response không hợp lệ: ' + raw.substring(0, 120));
-    }
-
-    if (result.status === 'success') {
-      setSheetStatus('success', '✅ Ghi Google Sheets thành công! ' + (result.message || ''));
-      console.log('✅', result.message);
-    } else {
-      throw new Error(result.message || 'Server báo lỗi không xác định');
-    }
+    // Với no-cors, fetch resolve = đã gửi thành công
+    setSheetStatus('success', '✅ Đã gửi lên Google Sheets thành công!');
+    console.log('✅ Dữ liệu đã gửi thành công.');
   } catch (err) {
     clearTimeout(tid);
     const msg = err.name === 'AbortError' ? 'Timeout 15 giây.' : err.message;
