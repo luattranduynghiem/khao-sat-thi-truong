@@ -100,7 +100,7 @@
 // ══════════════════════════════════════════════════
 // ⚙️ CẤU HÌNH — CHỈ SỬA DÒNG NÀY
 // ══════════════════════════════════════════════════
-const APPS_SCRIPT_URL = 'DÁN_LINK_WEB_APP_CỦA_BẠN_VÀO_ĐÂY';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxhP5iKH1euTSHIcHWkavdIdU2iyQlwphzBTUa7CP8V63w6VezB4CYXfEf0kWwjabAXXw/exec';
 
 // ══════════════════════════════════════════════════
 // 📋 DỮ LIỆU KHẢO SÁT
@@ -191,7 +191,7 @@ function saveToLocalStorage(data) {
 
 async function sendToGoogleSheets(output) {
   const isValid = APPS_SCRIPT_URL &&
-    APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbwvt6R9tSch-SMYMU447F9XFt-BpuDXk9VbyxCBNoQwoEpCcIgQpXtHBJFij9jz1D1DhA/exec' &&
+    APPS_SCRIPT_URL !== 'https://script.google.com/macros/s/AKfycbxhP5iKH1euTSHIcHWkavdIdU2iyQlwphzBTUa7CP8V63w6VezB4CYXfEf0kWwjabAXXw/exec' &&
     APPS_SCRIPT_URL.startsWith('https://script.google.com');
 
   if (!isValid) {
