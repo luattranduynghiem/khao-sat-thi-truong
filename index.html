@@ -19,63 +19,122 @@
     body { display: flex; align-items: center; justify-content: center; }
     #game-container { width: 100%; height: 100%; }
     #game-container canvas { display: block; }
+
+    /* ── Màn hình nhập Nickname ── */
+    #nickname-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 998;
+      background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .nickname-card {
+      width: min(480px, 100%);
+      background: rgba(15,23,42,0.88);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 28px; padding: 40px 28px;
+      backdrop-filter: blur(12px);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 20px;
+    }
+    .nickname-card .nc-emoji { font-size: 3.2rem; line-height: 1; }
+    .nickname-card h2 {
+      color: #fde047; font-size: 1.5rem; font-weight: 800;
+      text-align: center; margin: 0;
+    }
+    .nickname-card p {
+      color: #cbd5e1; font-size: 0.97rem;
+      text-align: center; line-height: 1.7; margin: 0;
+    }
+    #nickname-input {
+      width: 100%; padding: 15px 20px;
+      border-radius: 999px;
+      border: 2px solid rgba(253,224,71,0.4);
+      background: rgba(255,255,255,0.07);
+      color: #f8fafc;
+      font-family: 'Nunito', Arial, sans-serif;
+      font-size: 1.1rem; font-weight: 700;
+      text-align: center; outline: none;
+      transition: border 0.2s, background 0.2s;
+      /* Cho phép gõ chữ trên mobile */
+      user-select: text; -webkit-user-select: text;
+      touch-action: auto;
+    }
+    #nickname-input::placeholder { color: #475569; }
+    #nickname-input:focus {
+      border-color: #fde047;
+      background: rgba(255,255,255,0.11);
+    }
+    #nickname-start-btn {
+      width: 100%; padding: 15px;
+      border-radius: 999px; border: 0;
+      background: #fde047; color: #111827;
+      font-family: 'Nunito', Arial, sans-serif;
+      font-size: 1.1rem; font-weight: 800;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    #nickname-start-btn:active { transform: scale(0.97); opacity: 0.9; }
+    #nickname-skip {
+      color: #64748b; font-size: 0.88rem;
+      cursor: pointer; text-decoration: underline;
+      background: none; border: none;
+      font-family: 'Nunito', Arial, sans-serif;
+      padding: 4px 8px;
+    }
+    #nickname-skip:hover { color: #94a3b8; }
+
+    /* ── Màn hình kết quả ── */
     #survey-result {
       display: none; position: fixed; inset: 0; z-index: 999;
-      overflow-y: auto;
       background: linear-gradient(180deg, #0f172a 0%, #172554 100%);
-      color: #eef2ff; padding: 16px;
-      padding-top: calc(16px + env(safe-area-inset-top));
-      padding-bottom: calc(16px + env(safe-area-inset-bottom));
     }
-    .result-card {
-      width: min(760px, 100%); margin: 0 auto;
-      background: rgba(15,23,42,0.62); border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 20px; padding: 20px; backdrop-filter: blur(8px);
-    }
-    #survey-result h2 { text-align:center; color:#fde047; font-weight:800; font-size:1.6rem; margin-bottom:8px; }
-    #survey-result .sub { text-align:center; color:#cbd5e1; font-size:0.96rem; margin-bottom:14px; line-height:1.5; }
-    .thanks-box {
-      background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.35);
-      border-radius: 14px; padding: 12px 14px; color: #dcfce7;
-      line-height: 1.6; margin-bottom: 14px; font-size: 0.95rem;
-    }
-    #sheet-status {
-      display: flex; align-items: center; gap: 8px;
-      border-radius: 10px; padding: 10px 14px;
-      font-size: 0.9rem; font-weight: 700; margin-bottom: 14px;
-    }
-    #sheet-status.sending { background:rgba(250,204,21,0.15); color:#fde047; border:1px solid rgba(250,204,21,0.3); }
-    #sheet-status.success { background:rgba(34,197,94,0.15);  color:#86efac; border:1px solid rgba(34,197,94,0.3); }
-    #sheet-status.error   { background:rgba(239,68,68,0.15);  color:#fca5a5; border:1px solid rgba(239,68,68,0.3); }
-    #sheet-status.saved   { background:rgba(59,130,246,0.15); color:#93c5fd; border:1px solid rgba(59,130,246,0.3); }
-    #survey-result pre {
-      background:rgba(2,6,23,0.78); border:1px solid rgba(255,255,255,0.12);
-      border-radius:14px; padding:14px; font-size:0.82rem; line-height:1.6;
-      color:#bbf7d0; white-space:pre-wrap; word-break:break-word;
-      overflow-wrap:anywhere; max-height:280px; overflow-y:auto;
-    }
-    .result-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; margin-top:16px; }
-    .result-actions button {
-      border:0; border-radius:999px; padding:12px 18px; min-height:48px;
-      font-family:'Nunito',Arial,sans-serif; font-size:0.98rem; font-weight:800; cursor:pointer;
-    }
-    .btn-primary   { background:#fde047; color:#111827; }
-    .btn-secondary { background:#dbeafe; color:#0f172a; }
-    .btn-ghost     { background:#e2e8f0; color:#0f172a; }
   </style>
 </head>
 <body>
-  <div id="survey-result">
-  <div class="result-card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; gap:18px;">
-    <div style="font-size:3.2rem;">🌿</div>
-    <h2 style="text-align:center; color:#fde047; font-weight:800; font-size:1.8rem; margin:0;">
-      Cảm ơn bạn đã tham gia!
-    </h2>
-    <p style="text-align:center; color:#cbd5e1; font-size:1.05rem; line-height:1.7; margin:0;">
-      Phản hồi của bạn đã được ghi nhận.<br>Chúc bạn một ngày tốt lành! 😊
-    </p>
+
+  <!-- Màn hình nhập Nickname -->
+  <div id="nickname-screen">
+    <div class="nickname-card">
+      <div class="nc-emoji">🎮</div>
+      <h2>Trước khi bắt đầu...</h2>
+      <p>Hãy cho chúng tôi biết bạn muốn<br>được gọi là gì nhé!</p>
+      <input
+        type="text"
+        id="nickname-input"
+        placeholder="Nhập nickname của bạn..."
+        maxlength="30"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+      />
+      <button id="nickname-start-btn" onclick="startWithNickname()">
+        Bắt đầu khảo sát 🚀
+      </button>
+      <button id="nickname-skip" onclick="startWithNickname(true)">
+        Bỏ qua, không điền nickname
+      </button>
+    </div>
   </div>
-</div>
+
+  <!-- Màn hình game -->
+  <div id="game-container"></div>
+
+  <!-- Màn hình kết quả -->
+  <div id="survey-result">
+    <div style="display:flex; flex-direction:column; align-items:center;
+                justify-content:center; min-height:100vh; gap:20px; padding:24px;">
+      <div style="font-size:3.2rem;">🌿</div>
+      <h2 style="text-align:center; color:#fde047; font-weight:800;
+                 font-size:1.8rem; margin:0; font-family:'Nunito',Arial,sans-serif;">
+        Cảm ơn bạn đã tham gia!
+      </h2>
+      <p style="text-align:center; color:#cbd5e1; font-size:1.05rem;
+                line-height:1.8; margin:0; font-family:'Nunito',Arial,sans-serif;">
+        Phản hồi của bạn đã được ghi nhận.<br>Chúc bạn một ngày tốt lành! 😊
+      </p>
+    </div>
+  </div>
 
 <script>
 // ══════════════════════════════════════════════════════════════
@@ -149,29 +208,32 @@ const CFG = {
 
 let surveyResponses = [];
 let finalOutput     = null;
+let playerNickname  = '';   // ← NICKNAME
 let game            = null;
 
 // ══════════════════════════════════════════════════════════════
-// 📤 GỬI GOOGLE SHEETS
+// 🎮 NICKNAME
 // ══════════════════════════════════════════════════════════════
-function setSheetStatus(type, msg) {
-  const el = document.getElementById('sheet-status');
-  if (!el) return;
-  el.className  = type;
-  el.textContent = msg;
+function startWithNickname(skip = false) {
+  const input    = document.getElementById('nickname-input');
+  playerNickname = skip ? '(Ẩn danh)' : (input.value.trim() || '(Ẩn danh)');
+  document.getElementById('nickname-screen').style.display = 'none';
+  if (game) game.scene.start('GameScene');
 }
 
+// ══════════════════════════════════════════════════════════════
+// 📤 GỬI GOOGLE SHEETS (im lặng hoàn toàn)
+// ══════════════════════════════════════════════════════════════
 function saveToLocalStorage(data) {
   try {
     const list = JSON.parse(localStorage.getItem('survey_backup') || '[]');
     list.push({ data, savedAt: new Date().toISOString() });
     localStorage.setItem('survey_backup', JSON.stringify(list));
-    console.log('💾 Đã backup localStorage.');
+    console.log('💾 Backup localStorage.');
   } catch(e) { console.error('localStorage error:', e); }
 }
 
 async function sendToGoogleSheets(output) {
-  // Chạy hoàn toàn im lặng — không hiện bất kỳ thông báo nào cho người dùng
   setTimeout(async () => {
     try {
       await fetch(APPS_SCRIPT_URL, {
@@ -184,7 +246,7 @@ async function sendToGoogleSheets(output) {
       console.log('✅ Gửi dữ liệu thành công.');
     } catch (err) {
       console.error('❌ Lỗi gửi:', err.message);
-      saveToLocalStorage(output); // backup ngầm, người dùng không hay biết
+      saveToLocalStorage(output);
     }
   }, 100);
 }
@@ -216,7 +278,18 @@ class StartScene extends Phaser.Scene {
       color:'#111827', backgroundColor:'#fde047', padding:{x:24,y:14}
     }).setOrigin(0.5).setInteractive({useHandCursor:true});
     this.tweens.add({targets:btn, scaleX:1.05, scaleY:1.05, duration:720, yoyo:true, repeat:-1});
-    btn.on('pointerdown', () => this.scene.start('GameScene'));
+
+    // Mở màn hình nickname thay vì vào game thẳng
+    btn.on('pointerdown', () => {
+      const ns = document.getElementById('nickname-screen');
+      ns.style.display = 'flex';
+      // Delay focus để tránh conflict với touch event trên mobile
+      setTimeout(() => {
+        const inp = document.getElementById('nickname-input');
+        inp.focus();
+        inp.onkeydown = (e) => { if (e.key === 'Enter') startWithNickname(); };
+      }, 300);
+    });
   }
 }
 
@@ -426,26 +499,25 @@ class GameScene extends Phaser.Scene {
   }
 
   endGame(skipped = false) {
-  const snapshotResponses = [...surveyResponses];
-  const output = {
-    survey:            SURVEY_DATA.title,
-    completedAt:       new Date().toISOString(),
-    endedEarly:        skipped,
-    totalQuestions:    SURVEY_DATA.questions.length,
-    answeredQuestions: snapshotResponses.length,
-    responses:         snapshotResponses
-  };
-  finalOutput = output;
+    const snapshotResponses = [...surveyResponses];
+    const output = {
+      survey:            SURVEY_DATA.title,
+      nickname:          playerNickname,      // ← GỬI KÈM NICKNAME
+      completedAt:       new Date().toISOString(),
+      endedEarly:        skipped,
+      totalQuestions:    SURVEY_DATA.questions.length,
+      answeredQuestions: snapshotResponses.length,
+      responses:         snapshotResponses
+    };
+    finalOutput = output;
 
-  // Hiển thị màn hình cảm ơn đơn giản cho người dùng
-  const resultEl = document.getElementById('survey-result');
-  if (resultEl) resultEl.style.display = 'block';
+    const resultEl = document.getElementById('survey-result');
+    if (resultEl) resultEl.style.display = 'block';
 
-  // Gửi dữ liệu ngầm — người dùng không thấy gì cả
-  sendToGoogleSheets(output);
+    sendToGoogleSheets(output);
 
-  if (this.scene && this.scene.pause) this.scene.pause();
-}
+    if (this.scene && this.scene.pause) this.scene.pause();
+  }
 
   drawCharacter() {
     const g = this.charGfx, x = this.charX, y = this.charY, f = this.facingRight?1:-1;
@@ -491,56 +563,6 @@ class GameScene extends Phaser.Scene {
     this.drawCharacter();
     this.drawGround();
   }
-}
-
-// ══════════════════════════════════════════════════════════════
-// 💾 DOWNLOAD & UTILITIES
-// ══════════════════════════════════════════════════════════════
-function buildCSV(output) {
-  const rows = [['survey','completedAt','endedEarly','totalQuestions','answeredQuestions',
-    'questionId','questionText','answerId','answerLabel','timestamp']];
-  output.responses.forEach(r => rows.push([
-    output.survey, output.completedAt, output.endedEarly,
-    output.totalQuestions, output.answeredQuestions,
-    r.questionId, r.questionText, r.answerId, r.answerLabel, r.timestamp
-  ]));
-  return rows.map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-}
-
-function downloadTextFile(filename, text, mimeType) {
-  const blob = new Blob(['\uFEFF'+text], {type:mimeType});
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href=url; a.download=filename;
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-}
-
-function downloadJSON() {
-  if (!finalOutput) return;
-  downloadTextFile(
-    `survey_${new Date().toISOString().replace(/[:.]/g,'-')}.json`,
-    JSON.stringify(finalOutput,null,2), 'application/json;charset=utf-8');
-}
-
-function downloadCSV() {
-  if (!finalOutput) return;
-  downloadTextFile(
-    `survey_${new Date().toISOString().replace(/[:.]/g,'-')}.csv`,
-    buildCSV(finalOutput), 'text/csv;charset=utf-8');
-}
-
-function copyResult() {
-  const text = document.getElementById('result-json').textContent;
-  navigator.clipboard.writeText(text)
-    .then(() => alert('Đã sao chép dữ liệu.'))
-    .catch(() => alert('Không thể sao chép tự động. Hãy sao chép thủ công.'));
-}
-
-function restartGame() {
-  document.getElementById('survey-result').style.display = 'none';
-  surveyResponses = []; finalOutput = null;
-  if (game) { game.scene.stop('GameScene'); game.scene.start('StartScene'); }
 }
 
 // ══════════════════════════════════════════════════════════════
