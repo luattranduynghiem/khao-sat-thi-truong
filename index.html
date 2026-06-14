@@ -20,10 +20,9 @@
     #game-container { width: 100%; height: 100%; }
     #game-container canvas { display: block; }
 
-    /* ── Màn hình nhập Nickname ── */
+    /* Màn hình Nickname */
     #nickname-screen {
-      display: none;
-      position: fixed; inset: 0; z-index: 998;
+      display: none; position: fixed; inset: 0; z-index: 998;
       background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 100%);
       align-items: center; justify-content: center; padding: 24px;
     }
@@ -37,53 +36,35 @@
       align-items: center; gap: 20px;
     }
     .nickname-card .nc-emoji { font-size: 3.2rem; line-height: 1; }
-    .nickname-card h2 {
-      color: #fde047; font-size: 1.5rem; font-weight: 800;
-      text-align: center; margin: 0;
-    }
-    .nickname-card p {
-      color: #cbd5e1; font-size: 0.97rem;
-      text-align: center; line-height: 1.7; margin: 0;
-    }
+    .nickname-card h2 { color:#fde047; font-size:1.5rem; font-weight:800; text-align:center; margin:0; }
+    .nickname-card p  { color:#cbd5e1; font-size:0.97rem; text-align:center; line-height:1.7; margin:0; }
     #nickname-input {
-      width: 100%; padding: 15px 20px;
-      border-radius: 999px;
+      width: 100%; padding: 15px 20px; border-radius: 999px;
       border: 2px solid rgba(253,224,71,0.4);
-      background: rgba(255,255,255,0.07);
-      color: #f8fafc;
+      background: rgba(255,255,255,0.07); color: #f8fafc;
       font-family: 'Nunito', Arial, sans-serif;
-      font-size: 1.1rem; font-weight: 700;
-      text-align: center; outline: none;
+      font-size: 1.1rem; font-weight: 700; text-align: center; outline: none;
       transition: border 0.2s, background 0.2s;
-      /* Cho phép gõ chữ trên mobile */
-      user-select: text; -webkit-user-select: text;
-      touch-action: auto;
+      user-select: text; -webkit-user-select: text; touch-action: auto;
     }
     #nickname-input::placeholder { color: #475569; }
-    #nickname-input:focus {
-      border-color: #fde047;
-      background: rgba(255,255,255,0.11);
-    }
+    #nickname-input:focus { border-color: #fde047; background: rgba(255,255,255,0.11); }
     #nickname-start-btn {
-      width: 100%; padding: 15px;
-      border-radius: 999px; border: 0;
+      width: 100%; padding: 15px; border-radius: 999px; border: 0;
       background: #fde047; color: #111827;
       font-family: 'Nunito', Arial, sans-serif;
-      font-size: 1.1rem; font-weight: 800;
-      cursor: pointer;
+      font-size: 1.1rem; font-weight: 800; cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
     }
     #nickname-start-btn:active { transform: scale(0.97); opacity: 0.9; }
     #nickname-skip {
-      color: #64748b; font-size: 0.88rem;
-      cursor: pointer; text-decoration: underline;
-      background: none; border: none;
-      font-family: 'Nunito', Arial, sans-serif;
-      padding: 4px 8px;
+      color: #64748b; font-size: 0.88rem; cursor: pointer;
+      text-decoration: underline; background: none; border: none;
+      font-family: 'Nunito', Arial, sans-serif; padding: 4px 8px;
     }
     #nickname-skip:hover { color: #94a3b8; }
 
-    /* ── Màn hình kết quả ── */
+    /* Màn hình kết quả */
     #survey-result {
       display: none; position: fixed; inset: 0; z-index: 999;
       background: linear-gradient(180deg, #0f172a 0%, #172554 100%);
@@ -92,22 +73,16 @@
 </head>
 <body>
 
-  <!-- Màn hình nhập Nickname -->
+  <!-- Nickname -->
   <div id="nickname-screen">
     <div class="nickname-card">
       <div class="nc-emoji">🎮</div>
       <h2>Trước khi bắt đầu...</h2>
       <p>Hãy cho chúng tôi biết bạn muốn<br>được gọi là gì nhé!</p>
-      <input
-        type="text"
-        id="nickname-input"
+      <input type="text" id="nickname-input"
         placeholder="Nhập nickname của bạn..."
-        maxlength="30"
-        autocomplete="off"
-        autocorrect="off"
-        autocapitalize="off"
-        spellcheck="false"
-      />
+        maxlength="30" autocomplete="off" autocorrect="off"
+        autocapitalize="off" spellcheck="false" />
       <button id="nickname-start-btn" onclick="startWithNickname()">
         Bắt đầu khảo sát 🚀
       </button>
@@ -117,10 +92,10 @@
     </div>
   </div>
 
-  <!-- Màn hình game -->
+  <!-- Game -->
   <div id="game-container"></div>
 
-  <!-- Màn hình kết quả -->
+  <!-- Kết quả -->
   <div id="survey-result">
     <div style="display:flex; flex-direction:column; align-items:center;
                 justify-content:center; min-height:100vh; gap:20px; padding:24px;">
@@ -208,7 +183,7 @@ const CFG = {
 
 let surveyResponses = [];
 let finalOutput     = null;
-let playerNickname  = '';   // ← NICKNAME
+let playerNickname  = '';
 let game            = null;
 
 // ══════════════════════════════════════════════════════════════
@@ -222,7 +197,7 @@ function startWithNickname(skip = false) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 📤 GỬI GOOGLE SHEETS (im lặng hoàn toàn)
+// 📤 GỬI GOOGLE SHEETS
 // ══════════════════════════════════════════════════════════════
 function saveToLocalStorage(data) {
   try {
@@ -243,9 +218,9 @@ async function sendToGoogleSheets(output) {
         headers:   { 'Content-Type': 'text/plain;charset=utf-8' },
         body:      JSON.stringify(output)
       });
-      console.log('✅ Gửi dữ liệu thành công.');
+      console.log('✅ Gửi thành công.');
     } catch (err) {
-      console.error('❌ Lỗi gửi:', err.message);
+      console.error('❌ Lỗi:', err.message);
       saveToLocalStorage(output);
     }
   }, 100);
@@ -278,12 +253,8 @@ class StartScene extends Phaser.Scene {
       color:'#111827', backgroundColor:'#fde047', padding:{x:24,y:14}
     }).setOrigin(0.5).setInteractive({useHandCursor:true});
     this.tweens.add({targets:btn, scaleX:1.05, scaleY:1.05, duration:720, yoyo:true, repeat:-1});
-
-    // Mở màn hình nickname thay vì vào game thẳng
     btn.on('pointerdown', () => {
-      const ns = document.getElementById('nickname-screen');
-      ns.style.display = 'flex';
-      // Delay focus để tránh conflict với touch event trên mobile
+      document.getElementById('nickname-screen').style.display = 'flex';
       setTimeout(() => {
         const inp = document.getElementById('nickname-input');
         inp.focus();
@@ -502,7 +473,7 @@ class GameScene extends Phaser.Scene {
     const snapshotResponses = [...surveyResponses];
     const output = {
       survey:            SURVEY_DATA.title,
-      nickname:          playerNickname,      // ← GỬI KÈM NICKNAME
+      nickname:          playerNickname,
       completedAt:       new Date().toISOString(),
       endedEarly:        skipped,
       totalQuestions:    SURVEY_DATA.questions.length,
@@ -510,12 +481,9 @@ class GameScene extends Phaser.Scene {
       responses:         snapshotResponses
     };
     finalOutput = output;
-
     const resultEl = document.getElementById('survey-result');
     if (resultEl) resultEl.style.display = 'block';
-
     sendToGoogleSheets(output);
-
     if (this.scene && this.scene.pause) this.scene.pause();
   }
 
@@ -566,7 +534,7 @@ class GameScene extends Phaser.Scene {
 }
 
 // ══════════════════════════════════════════════════════════════
-// 🚀 KHỞI ĐỘNG GAME
+// 🚀 KHỞI ĐỘNG
 // ══════════════════════════════════════════════════════════════
 game = new Phaser.Game({
   type: Phaser.AUTO,
